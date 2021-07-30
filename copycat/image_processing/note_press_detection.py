@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 from global_types import Image, Contour
-from processing.color import Color
+from image_processing.color import Color
 
 
 class NoteDetector:
@@ -21,3 +21,5 @@ class NoteDetector:
 
 def _get_mean_color_at_slice(color_slice: np.ndarray) -> Color:
     return Color.from_bgr(*color_slice.mean(axis=0))
+
+# def _get_color_difference_percentage_at_slice(color_slice: np.ndarray) -> float:

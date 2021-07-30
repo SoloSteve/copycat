@@ -5,7 +5,7 @@ import numpy as np
 
 from global_types import Image, Contour, Bounds
 from media_parsing.crop import crop
-from processing.paino_key import ColorFamily, PianoKey
+from image_processing.paino_key import ColorFamily, PianoKey
 
 
 def get_piano_keys(control_frame: Image, bounds: Bounds, white_key_offset: int) -> Dict[str, PianoKey]:
