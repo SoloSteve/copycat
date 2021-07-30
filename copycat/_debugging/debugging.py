@@ -2,7 +2,7 @@ from typing import List, Iterable
 
 import cv2
 
-from copycat.global_types import Image
+from copycat.global_types import Image, Bounds
 from image_processing.paino_key import PianoKey
 
 
@@ -28,21 +28,20 @@ def show_contours(original_image, contours: List, slideshow=0):
         cv2.imshow("contoured", image)
 
 
-def show_contours_for_keys(original_image, keys: Iterable[PianoKey]):
+def draw_contours_for_keys(original_image, keys: Iterable[PianoKey]):
     image = original_image.copy()
     for key in keys:
-        print(key.note)
-        show_contours(image, [key.contour])
-        cv2.waitKey()
+        bounds = Bounds(*cv2.boundingRect(key.contour))
+        cv2.putText(image, key.note, (bounds.x + round(bounds.width / 10), bounds.y + round(bounds.height / 2)),
+                    cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.4, color=(255, 105, 180))
+        __outline_contour(image, key.contour)
+    return image
 
 
 def draw_detector_line(original_image, line_height):
-    image = original_image.copy()
-    cv2.line(image, (0, line_height), (image.shape[1], line_height), (36, 255, 12), 3)
-    cv2.imshow("detector_line", image)
+    cv2.imshow("detector_line", draw_line(original_image, line_height))
     cv2.waitKey()
     cv2.destroyWindow("detector_line")
-    return image
 
 
 def draw_circle(original_image, x, y):
@@ -51,12 +50,16 @@ def draw_circle(original_image, x, y):
     return image
 
 
-def draw_bounds(base_image, x, y, w, h):
-    image = base_image.copy()
+def draw_rectangle(original_image, x, y, w, h):
+    image = original_image.copy()
     cv2.rectangle(image, (x, y), (x + w, y + h), (36, 255, 12), 3)
-    cv2.imshow("rectangle", image)
-    cv2.waitKey()
-    cv2.destroyWindow("rectangle")
+    return image
+
+
+def draw_line(original_image, line_height):
+    image = original_image.copy()
+    cv2.line(image, (0, line_height), (image.shape[1], line_height), (0, 191, 255), 3)
+    return image
 
 
 def __outline_contour(base_image, contour):
@@ -67,11 +70,9 @@ def __outline_contour(base_image, contour):
 
 
 def debug_params(control_frame, frames, keys, detector, bounds):
-    draw_bounds(control_frame, bounds.x, bounds.y, bounds.width, bounds.height)
-    show_contours_for_keys(control_frame, keys.values())
-    draw_detector_line(control_frame, detector._detection_height)
-    for frame in frames:
-        for key in keys.values():
-            if detector.is_note_detected(key.contour, frame):
-                if int(key.note[-1]) < 3 or (int(key.note[-1] == 3 and ord(key.note[0]) <= 68)):
-                    continue
+    original_image = control_frame.copy()
+    image = draw_rectangle(original_image, bounds.x, bounds.y, bounds.width, bounds.height)
+    image = draw_line(image, detector._detection_height)
+    image = draw_contours_for_keys(image, keys.values())
+    cv2.imshow("debug", image)
+    cv2.waitKey()

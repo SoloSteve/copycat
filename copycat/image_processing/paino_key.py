@@ -44,7 +44,7 @@ class PianoKey:
         octave = note[-1]
 
         if letter in WHITE_NOTES:
-            index = WHITE_NOTES.index(letter) + int(octave) * 7
+            index = WHITE_NOTES.index(letter) + (int(octave) - 1) * 7
         else:
             raise NotImplementedError("Only white keys are supported")
         return index

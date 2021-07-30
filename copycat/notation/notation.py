@@ -54,10 +54,11 @@ LENGTHS = {
 
 
 class Notation:
-    def __init__(self, fps: float, tempo: int, title: str, octave_offset: int = 0):
+    def __init__(self, fps: float, tempo: int, octave_offset: int, min_note_speed: int):
         self.fps = round(fps)
         self.tempo = tempo
         self.octave_offset = octave_offset
+        self.min_note_speed = min_note_speed
 
         self.notation_string: str = ""
 
@@ -93,7 +94,7 @@ class Notation:
 
             parsed_note = sharp_parser(note)
             parsed_note = octave_parser(parsed_note, self.octave_offset)
-            length = length_parser(state.frame_count / self.fps, self.tempo, min_length_index=3)[0]
+            length = length_parser(state.frame_count / self.fps, self.tempo, min_length_index=self.min_note_speed)[0]
             section += f"{parsed_note}{length}"
 
             self.treble_notes.pop(note)
