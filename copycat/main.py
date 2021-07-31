@@ -1,14 +1,13 @@
 import argparse
-
-import cv2
 from os import path
-from _debugging.debugging import debug_params
-from global_types import Bounds, Clef
-from media_parsing.video_to_frames import Video
-from image_processing.key_extraction import get_piano_keys
-from image_processing.note_press_detection import NoteDetector
-from image_processing.paino_key import PianoKey
-from notation.notation import Notation
+
+from copycat.debugging.debugging import debug_params
+from copycat.global_types import Bounds, Clef
+from copycat.image_processing.key_extraction import get_piano_keys
+from copycat.image_processing.note_press_detection import NoteDetector
+from copycat.image_processing.paino_key import PianoKey
+from copycat.media_parsing.video_to_frames import Video
+from copycat.notation.notation import Notation
 
 
 def main(
@@ -51,8 +50,8 @@ def main(
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--file", help="The path of the mp4 synthesia video", metavar="PATH", required=True)
-    parser.add_argument("--tempo", help="The tempo of the piece in BPM", default=120, type=int)
+    parser.add_argument("-f", "--file", help="The path of the mp4 synthesia video", metavar="PATH", required=True)
+    parser.add_argument("-t", "--tempo", help="The tempo of the piece in BPM", default=120, type=int)
     subparsers = parser.add_subparsers()
     manual = subparsers.add_parser("manual")
     manual.add_argument("--bounds", help="The boundaries around the piano keys space separated",

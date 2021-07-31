@@ -5,9 +5,11 @@ from dataclasses import dataclass
 from functools import reduce
 from typing import Dict, List, Type, Tuple
 
-from global_types import Clef
+from copycat.global_types import Clef
 
 OCTAVES = {
+    "A2": "A,,",
+    "B2": "B,,",
     "C2": "C,",
     "D2": "D,",
     "E2": "E,",
@@ -36,6 +38,11 @@ OCTAVES = {
     "G5": "g'",
     "A6": "a'",
     "B6": "b'",
+    "C6": "c''",
+    "D6": "d''",
+    "E6": "e''",
+    "F6": "f''",
+    "G6": "g''",
 }
 
 LENGTHS = {

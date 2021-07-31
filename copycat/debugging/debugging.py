@@ -3,7 +3,7 @@ from typing import List, Iterable
 import cv2
 
 from copycat.global_types import Image, Bounds
-from image_processing.paino_key import PianoKey
+from copycat.image_processing.paino_key import PianoKey
 
 
 def show_video(video: Iterable[Image]):

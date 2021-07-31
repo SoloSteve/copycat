@@ -2,7 +2,7 @@ import math
 from enum import Enum
 from typing import Any
 
-from global_types import Contour
+from copycat.global_types import Contour
 
 NOTE_ORDER = ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 WHITE_NOTES = ["A", "B", "C", "D", "E", "F", "G"]

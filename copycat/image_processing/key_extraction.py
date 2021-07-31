@@ -3,9 +3,9 @@ from typing import Dict, Iterable
 import cv2
 import numpy as np
 
-from global_types import Image, Contour, Bounds
-from media_parsing.crop import crop
-from image_processing.paino_key import ColorFamily, PianoKey
+from copycat.global_types import Image, Contour, Bounds
+from copycat.media_parsing.crop import crop
+from copycat.image_processing.paino_key import ColorFamily, PianoKey
 
 
 def get_piano_keys(control_frame: Image, bounds: Bounds, white_key_offset: int) -> Dict[str, PianoKey]:

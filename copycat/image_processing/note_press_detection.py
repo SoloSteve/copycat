@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-from global_types import Image, Contour, Clef
-from image_processing.color import Color
+from copycat.global_types import Image, Contour, Clef
+from copycat.image_processing.color import Color
 
 BLUE = Color(b=255, g=0, r=0)
 GREEN = Color(b=0, g=255, r=0)
