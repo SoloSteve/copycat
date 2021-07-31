@@ -1,4 +1,4 @@
-import re
+import math
 from bisect import bisect_left
 from collections import defaultdict
 from dataclasses import dataclass
@@ -60,11 +60,13 @@ class Notation:
         self.octave_offset = octave_offset
         self.min_note_speed = min_note_speed
 
-        self.notation_string: str = ""
+        self.treble_notation_string: List[str] = [""]
+        self.bass_notation_string: List[str] = [""]
 
         self.treble_notes: Dict[str, NoteState] = defaultdict(NoteState)
         self.bass_notes: Dict[str, NoteState] = defaultdict(NoteState)
         self.iteration = 0
+        self.notation_segment = 0
 
     def push_note(self, note: str, clef: Clef = Clef.TREBLE):
         if clef == Clef.TREBLE:
@@ -76,42 +78,69 @@ class Notation:
         note_state.iteration = self.iteration
 
     def apply_frame(self):
-        if len(self.treble_notes) == 0 or (self.treble_notes.get("0") is not None and len(self.treble_notes) == 1):
-            self.treble_notes["0"].iteration = self.iteration
-            self.treble_notes["0"].frame_count += 1
+        self._add_rest(self.treble_notes)
+        self._add_rest(self.bass_notes)
 
+        self._set_notes_notation(self.treble_notes, Clef.TREBLE)
+        self._set_notes_notation(self.bass_notes, Clef.BASS)
+
+        self.iteration += 1
+
+        self.notation_segment = self._iteration_to_segment(self.iteration)
+
+        # If a new segment is reached
+        if self.notation_segment != self._iteration_to_segment(self.iteration - 1):
+            self.treble_notation_string.append("")
+            self.bass_notation_string.append("")
+
+    def get_abc_notation(self, title="", composer="", clef: Clef = Clef.NONE):
+        final_notation = f"T: {title}\nC: {composer}\nQ: {self.tempo}\nV:2 bass\n"
+        for i in range(self.notation_segment):
+            final_notation += f"[V:1]{self.treble_notation_string[i] if clef != Clef.BASS else ''}\n" \
+                              f"[V:2]{self.bass_notation_string[i] if clef != Clef.TREBLE else ''}\n%\n"
+
+        return final_notation
+
+    def _add_rest(self, notes):
+        if len(notes) == 0 or (notes.get("0") is not None and len(notes) == 1):
+            notes["0"].iteration = self.iteration
+            notes["0"].frame_count += 1
+
+    def _set_notes_notation(self, notes, clef: Clef):
         section = "["
-        for note, state in list(self.treble_notes.items()):
+        iteration = self.iteration
+        frame_count = 0
+        for note, state in list(notes.items()):
             if state.iteration == self.iteration:
                 continue
 
             if note == "0":
                 length, index = length_parser(state.frame_count / self.fps, self.tempo)
                 if index >= 3:
-                    self.notation_string += f"z{length} "
-                self.treble_notes.pop("0")
+                    if clef == Clef.TREBLE:
+                        self.treble_notation_string[self._iteration_to_segment(state.iteration - state.frame_count)] += f"z{length} "
+                    else:
+                        self.bass_notation_string[self._iteration_to_segment(state.iteration - state.frame_count)] += f"z{length} "
+                notes.pop("0")
                 continue
 
             parsed_note = sharp_parser(note)
             parsed_note = octave_parser(parsed_note, self.octave_offset)
             length = length_parser(state.frame_count / self.fps, self.tempo, min_length_index=self.min_note_speed)[0]
             section += f"{parsed_note}{length}"
-
-            self.treble_notes.pop(note)
+            iteration = state.iteration
+            frame_count = state.frame_count
+            notes.pop(note)
         section += "] "
 
         if section != "[] ":
-            self.notation_string += section
+            if clef == Clef.TREBLE:
+                self.treble_notation_string[self._iteration_to_segment(iteration - frame_count)] += section
+            else:
+                self.bass_notation_string[self._iteration_to_segment(iteration - frame_count)] += section
 
-        self.iteration += 1
-
-    def get_abc_notation(self, title="", composer=""):
-        a = self.notation_string.split()
-        ret = ''
-        for i in range(0, len(a), 10):
-            ret += ' '.join(a[i:i + 10]) + '\n'
-
-        return f"T: {title}\nC: {composer}\nQ: {self.tempo}\n{ret}"
+    def _iteration_to_segment(self, iteration):
+        return math.floor(iteration / (round(self.fps) * 3))
 
 
 def octave_parser(note: str, offset: int = 0) -> str:

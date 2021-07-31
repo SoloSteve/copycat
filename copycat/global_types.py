@@ -27,3 +27,4 @@ class Point:
 class Clef(Enum):
     TREBLE = 0
     BASS = 1
+    NONE = 2
