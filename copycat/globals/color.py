@@ -42,6 +42,12 @@ class Color:
     def to_tuple(self):
         return self.b, self.g, self.r
 
+    def closer_to(self, other1, other2):
+        if self.diff(other1) < self.diff(other2):
+            return other1
+        else:
+            return other2
+
     @staticmethod
     def from_bgr(b: int, g: int, r: int):
         return Color(b=b, g=g, r=r)

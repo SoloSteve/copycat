@@ -1,6 +1,6 @@
 from typing import Iterator
 
-from copycat.global_types import Image, Bounds
+from globals.global_types import Image, Bounds
 
 
 def crop_video(frames: Iterator[Image], bounds: Bounds) -> Iterator[Image]:

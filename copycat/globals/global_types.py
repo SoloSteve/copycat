@@ -1,6 +1,8 @@
 from enum import Enum
 from dataclasses import dataclass
 from typing import NewType, Tuple
+
+from cv2 import cv2
 from numpy import ndarray
 
 Image = NewType("Image", ndarray)
@@ -13,6 +15,20 @@ class Bounds:
     y: int
     width: int
     height: int
+
+
+@dataclass
+class Section:
+    start: int
+    end: int
+
+    def size(self) -> int:
+        return self.end - self.start
+
+    @classmethod
+    def from_contour(cls, contour: Contour):
+        contour_x, _, contour_width, _ = cv2.boundingRect(contour)
+        return cls(contour_x, contour_x + contour_width)
 
 
 @dataclass

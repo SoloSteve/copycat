@@ -2,8 +2,8 @@ from typing import List, Iterable
 
 import cv2
 
-from copycat.global_types import Image, Bounds
-from copycat.image_processing.paino_key import PianoKey
+from globals.global_types import Image, Bounds
+from globals.paino_key import PianoKey
 
 
 def show_video(video: Iterable[Image]):

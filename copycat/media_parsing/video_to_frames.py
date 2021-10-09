@@ -3,7 +3,7 @@ from typing import Iterator
 import cv2
 from cv2 import VideoCapture
 
-from copycat.global_types import Image
+from globals.global_types import Image
 
 
 class Video:

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from functools import reduce
 from typing import Dict, List, Type, Tuple
 
-from copycat.global_types import Clef
+from globals.global_types import Clef
 
 OCTAVES = {
     "A2": "A,,",

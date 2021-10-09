@@ -1,111 +1,54 @@
-from typing import Dict, Iterable
+from typing import List, Tuple
 
-import cv2
 import numpy as np
 
-from copycat.global_types import Image, Contour, Bounds
-from copycat.media_parsing.crop import crop
-from copycat.image_processing.paino_key import ColorFamily, PianoKey
+from globals.color import Color
+from globals.global_types import Image, Section
+from globals.paino_key import PianoKey, KeyColor
+from image_processing.image_manipulations import reduce_colors
+
+WHITE = Color(255, 255, 255)
+BLACK = Color(0, 0, 0)
 
 
-def get_piano_keys(control_frame: Image, bounds: Bounds, white_key_offset: int) -> Dict[str, PianoKey]:
-    keys = {}
-    control_frame = crop(control_frame, bounds)
-    binary_keyboard_color = _reduce_colors(control_frame, 2)
-    white_key_contours = _format_contours(_sort_contours(_get_contours_for_white_keys(binary_keyboard_color)), bounds)
-    black_key_contours = _format_contours(_sort_contours(_get_contours_for_black_keys(binary_keyboard_color)), bounds)
+def get_piano_keys(control_frame: Image, key_offset: int, detection_height: int) -> List[PianoKey]:
+    binary_keyboard = reduce_colors(control_frame, 2)
+    detection_line = binary_keyboard[detection_height]
 
-    for index_in_contour, contour in enumerate(white_key_contours):
-        piano_key = PianoKey(
-            contour=contour,
-            color_family=ColorFamily.WHITE_KEY,
-            white_key_offset=white_key_offset,
-            local_index=index_in_contour
+    sections = _get_sections_by_border_detection(detection_line)
+    sections = [Section(x[0], x[1]) for x in sections]
+    sections = _filter_noise(sections, 5)
+
+    piano_keys = []
+
+    for i, section in enumerate(sections):
+        piano_keys.append(
+            PianoKey(
+                absolute_index=i + key_offset,
+                section=section
+            )
         )
-        keys[piano_key.note] = piano_key
-
-    for index_in_contour, contour in enumerate(black_key_contours):
-        piano_key = PianoKey(
-            contour=contour,
-            color_family=ColorFamily.BLACK_KEY,
-            white_key_offset=white_key_offset,
-            local_index=index_in_contour
-        )
-        keys[piano_key.note] = piano_key
-
-    return keys
+    return piano_keys
 
 
-def _reduce_colors(image: Image, number_of_colors: int) -> Image:
-    """
-    Reduce image colors using "kmeans cluster" algorithm
+def _get_sections_by_border_detection(detection_line: np.ndarray) -> List[Tuple[int, int]]:
+    sections = []
+    previous_color = detection_line[0]
+    previous_border_index = 0
 
-    https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_ml/py_kmeans/py_kmeans_opencv/py_kmeans_opencv.html#color-quantization
+    for i, pixel in enumerate(detection_line):
+        if not np.array_equal(previous_color, pixel):
+            sections.append((previous_border_index, i - 1))
+            previous_border_index = i
+            previous_color = pixel
 
-    :param image: The image whose colors will be reduced.
-    :param number_of_colors: The number of different colors that will be used to make up the new image.
-    :return: The new image with reduced colors
-    """
-    reshaped = image.reshape((-1, 3))
-
-    # convert to np.float32
-    reshaped = np.float32(reshaped)
-
-    # define criteria, number of clusters(K) and apply kmeans()
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 10.0)
-    ret, label, center = cv2.kmeans(reshaped, number_of_colors, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
-
-    # Now convert back into uint8, and make original image
-    center = np.uint8(center)
-    res = center[label.flatten()]
-    return res.reshape(image.shape)  # , center
+    return sections
 
 
-def _sort_contours(contours: Iterable[Contour], method="left-to-right"):
-    # initialize the reverse flag and sort index
-    reverse = False
-    i = 0
-    # handle if we need to sort in reverse
-    if method == "right-to-left" or method == "bottom-to-top":
-        reverse = True
-    # handle if we are sorting against the y-coordinate rather than
-    # the x-coordinate of the bounding box
-    if method == "top-to-bottom" or method == "bottom-to-top":
-        i = 1
-    # construct the list of bounding boxes and sort them from top to
-    # bottom
-    bounding_boxes = [cv2.boundingRect(c) for c in contours]
-    (contours, bounding_boxes) = zip(*sorted(zip(contours, bounding_boxes),
-                                             key=lambda b: b[1][i], reverse=reverse))
-    # return the list of sorted contours and bounding boxes
-    return contours  # , bounding_boxes
+def _filter_noise(sections: List[Section], minimum_key_width: int) -> List[Section]:
+    return list(filter(lambda section: section.end - section.start > minimum_key_width, sections))
 
 
-def _get_contours_for_black_keys(control_img: Image):
-    gray = cv2.cvtColor(control_img, cv2.COLOR_BGR2GRAY)
-    kernel = np.ones((10, 10), np.uint8)
-    dilated = cv2.dilate(gray, kernel)
-    _, thresh1 = cv2.threshold(dilated, 127, 255, cv2.THRESH_BINARY_INV)
-    cnts, _ = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    return cnts
-
-
-def _get_contours_for_white_keys(control_img: Image):
-    gray = cv2.cvtColor(control_img, cv2.COLOR_BGR2GRAY)
-    _, thresh1 = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-    cnts, _ = cv2.findContours(thresh1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    return list(filter(__is_contour_noise, cnts))
-
-
-def __is_contour_noise(contour: Contour, threshold_area=100):
-    area = cv2.contourArea(contour)
-    return area > threshold_area
-
-
-def _format_contours(contours, bounds: Bounds):
-    for contour in contours:
-        for point in contour:
-            point[0][0] += bounds.x
-            point[0][1] += bounds.y
-
-    return contours
+def _get_key_color(detection_line: np.ndarray, section: Section) -> KeyColor:
+    color = Color.from_bgr(*detection_line[section.start])
+    return KeyColor.BLACK_KEY if color.closer_to(BLACK, WHITE) == BLACK else KeyColor.WHITE_KEY
