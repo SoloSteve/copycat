@@ -55,7 +55,7 @@ Here is an example of a song with the correct parameters running in debug mode (
 ![](public/debug_example.png)
 
 ##### Explained
-1. The orange line is the detection line `--detector-line-offset`. It is where the key detection actually happens. Make sure no *special effects* are seen at this line.
+1. The orange line is the detection line. It is where the key detection actually happens. Make sure no *special effects* are seen at this line.
 2. The purple key text has been placed above the respective key.
 
 If everything looks good you can run without the `--debug` flag
