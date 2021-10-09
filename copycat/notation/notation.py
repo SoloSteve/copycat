@@ -8,6 +8,13 @@ from typing import Dict, List, Type, Tuple
 from globals.global_types import Clef
 
 OCTAVES = {
+    "A1": "A,,,",
+    "B1": "B,,,",
+    "C1": "C,,",
+    "D1": "D,,",
+    "E1": "E,,",
+    "F1": "F,,",
+    "G1": "G,,",
     "A2": "A,,",
     "B2": "B,,",
     "C2": "C,",
