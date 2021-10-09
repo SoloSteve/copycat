@@ -8,5 +8,5 @@ setup(
     author_email='',
     url='',
     packages=['copycat'],
-    install_requires=["numpy", "opencv-python", "pytest"]
+    install_requires=["numpy", "opencv-python", "pytest", "tqdm"]
 )

@@ -3,7 +3,7 @@ from typing import List, Iterable
 import cv2
 
 from globals.global_types import Image, Bounds
-from globals.paino_key import PianoKey
+from globals.paino_key import PianoKey, PianoKeyContour
 
 
 def show_video(video: Iterable[Image]):
@@ -28,13 +28,22 @@ def show_contours(original_image, contours: List, slideshow=0):
         cv2.imshow("contoured", image)
 
 
-def draw_contours_for_keys(original_image, keys: Iterable[PianoKey]):
+def draw_contours_for_keys(original_image, keys: Iterable[PianoKeyContour]):
     image = original_image.copy()
     for key in keys:
-        bounds = Bounds(*cv2.boundingRect(key.contour))
+        bounds = Bounds(*cv2.boundingRect(key.__contour))
         cv2.putText(image, key.note, (bounds.x + round(bounds.width / 10), bounds.y + round(bounds.height / 2)),
                     cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.4, color=(255, 105, 180))
-        __outline_contour(image, key.contour)
+        __outline_contour(image, key.__contour)
+    return image
+
+
+def draw_notes_for_keys(original_image, keys: Iterable[PianoKey], detection_height):
+    image = original_image.copy()
+    for key in keys:
+        cv2.putText(image, key.note,
+                    (key.section.start + round((key.section.end - key.section.start) / 10), detection_height - 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.4, color=(255, 105, 180))
     return image
 
 
@@ -69,10 +78,14 @@ def __outline_contour(base_image, contour):
     return image
 
 
-def debug_params(control_frame, frames, keys, detector, bounds):
-    original_image = control_frame.copy()
-    image = draw_rectangle(original_image, bounds.x, bounds.y, bounds.width, bounds.height)
+def debug_params(control_frame, keys, detector, bounds=None):
+    image = control_frame.copy()
+    if bounds is not None:
+        image = draw_rectangle(image, bounds.x, bounds.y, bounds.width, bounds.height)
     image = draw_line(image, detector._detection_height)
-    image = draw_contours_for_keys(image, keys.values())
+    if isinstance(keys[0], PianoKeyContour):
+        image = draw_contours_for_keys(image, keys.values())
+    else:
+        image = draw_notes_for_keys(image, keys, detector._detection_height)
     cv2.imshow("debug", image)
     cv2.waitKey()
