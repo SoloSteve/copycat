@@ -1,5 +1,5 @@
 from math import sqrt
-
+from webcolors import rgb_to_name
 
 class Color:
     """
@@ -37,7 +37,13 @@ class Color:
         return sqrt(self.r ** 2 + self.g ** 2 + self.b ** 2) - sqrt(other.r ** 2 + other.g ** 2 + other.b ** 2)
 
     def __str__(self):
-        return f"{self.r},{self.g},{self.b}"
+        try:
+            return rgb_to_name((self.r, self.g, self.b))
+        except ValueError:
+            return f"{self.r},{self.g},{self.b}"
+
+    def __repr__(self):
+        return str(self)
 
     def to_tuple(self):
         return self.b, self.g, self.r
@@ -53,5 +59,5 @@ class Color:
         return Color(b=b, g=g, r=r)
 
     @staticmethod
-    def from_rbg(r: int, b: int, g: int):
+    def from_rgb(r: int, g: int, b: int):
         return Color(b=b, g=g, r=r)
