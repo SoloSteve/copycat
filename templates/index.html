@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>catsite</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'copycat/css/reset.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'copycat/css/style.css' %}">
+  <script type="text/javascript">
+    function disp(){
+      let element = document.getElementById("id_files").value;
+      let filename = element.split(/(\\|\/)/g).pop();
+      let forminput = document.getElementById("fileinput");
+      forminput.value = filename; 
+      localStorage.setItem('filename', filename);
+      alert(filename + " + confirmed");
+    }
+    window.addEventListener('load', () => {
+      let forminput = document.getElementById("fileinput");
+      let filename = localStorage.getItem('filename');
+      if (filename) {
+        forminput.value = filename;
+      } else {
+        document.getElementById("fileStatus").textContent = "Files: No file selected";
+      }
+    });
+  </script>
+</head>
+<body class="main">
+  <header>
+    <p1>HELLO! THIS IS TEST PLACE >_0</p1>
+  </header>
+  <div class="container">
+    <div class="main-content">
+      <h1>① Upload Video File↓</h1>
+      <h2>Select the mp4 file you want to analyze</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="submit" type="file" id="checkfile" name="testfile" onclick="disp()">
+      </form>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <h1>② Enter Arguments↓</h1>
+      <form method="POST">
+        <p class="expo"><span>FileName</span> : <input type="text" id="fileinput" name="input_num1" required minlength="4" maxlength="100" size="10">{% csrf_token %}</p>
+        <p class="expo"><span>FirstKey</span>（Enter A0〜C9 on the Leftmost Keyboard） : <input type="text" id="name" name="input_num2" required minlength="2" maxlength="2" size="10">{% csrf_token %}</p>
+        <p class="expo"><span>MusicTempo</span>（BPM in 3 digits） : <input type="text" id="name" name="input_num3" required minlength="3" maxlength="3" size="10">{% csrf_token %}</p>
+        <p class="expo"><span>StartTiming</span>（Specify time to skip before start）: <input type="text" id="name" name="input_num4" required minlength="1" maxlength="1000" size="10">{% csrf_token %}</p>
+        <p class="expo"><span>KeyColor</span>（RGBColor）: <input type="text" id="name" name="input_num5" required minlength="7" maxlength="7" size="10">{% csrf_token %}</p>
+        <button type="submit">Run</button>
+        <input type="reset" name="Submit" value="Reset arguments">
+      </form>
+      <h1>③ Analysis Result↓</h1>
+      {% block content %}
+      <div class="box">
+        <h3>Result:</h3>
+        <p><pre>{{ result }}</pre></p>
+      </div>
+      {% endblock %}
+      <button onclick="window.location.href=window.location.origin+window.location.pathname">return to initial state</button>
+    </div>
+    <aside class="sidebar">
+      <h4>Dev Info</h4>
+      <p><h5>Name</h5> Topaz121/Ken1414</p>
+      <p><h5>Bio</h5> Japanese. I'm studying programming.Many thanks to the original creator.</p>
+      <p><h5>Comment</h5> Thank you Mx.Steve. This time, I edited the borrowed program and made it work in a browser using database operations.Please note that this message is translated through a translator, so some parts may be unclear.</p>
+    </aside>
+  </div>
+  <footer>
+    THANK YOU FOR USING 0_<
+  </footer>
+</body>
+</html>

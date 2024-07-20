@@ -1,15 +1,15 @@
 import argparse
 
-from cv2 import cv2
+import cv2
 from webcolors import hex_to_rgb
 
-from copycat.debugging.debugging import debug_params
-from copycat.image_processing.note_press_detection import NoteDetector
-from copycat.media_parsing.video_to_frames import Video
-from copycat.notation.notation import Notation
-from globals.color import Color
-from globals.global_types import Clef
-from globals.paino_key import PianoKey
+from debugging.debugging import debug_params
+from image_processing.note_press_detection import NoteDetector
+from media_parsing.video_to_frames import Video
+from notation.notation import Notation
+from globallll.color import Color
+from globallll.global_types import Clef
+from globallll.piano_key import PianoKey
 from image_processing.key_extraction import get_piano_keys, automatically_detect_keyboard_line
 from media_parsing.skip_frames import skip_video_frames
 from notation.note_stream import get_note_stream
@@ -64,13 +64,13 @@ if __name__ == '__main__':
                         type=float)
     parser.add_argument("--debug", help="Show debugged version", default=False, action="store_true")
 
-    parser.add_argument("--treble-color", help="The (approximate) color of the pressed key for treble clef",
+    parser.add_argument("-tc","--treble-color", help="The (approximate) color of the pressed key for treble clef",
                         default="#00FF00", type=str)
-    parser.add_argument("--bass-color", help="The (approximate) color of the pressed key for bass clef",
+    parser.add_argument("-bc","--bass-color", help="The (approximate) color of the pressed key for bass clef",
                         default="#0000FF", type=str)
 
     args = parser.parse_args()
-
+    
     main(
         file_path=args.file,
         first_key=args.first_key,
@@ -78,5 +78,5 @@ if __name__ == '__main__':
         tempo=args.tempo,
         debug=args.debug,
         treble_color=args.treble_color,
-        bass_color=args.bass_color
+        bass_color=args.bass_color,
     )

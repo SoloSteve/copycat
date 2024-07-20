@@ -3,8 +3,8 @@ from typing import List, Iterable
 
 from tqdm import tqdm
 
-from globals.global_types import Clef, Image
-from globals.paino_key import BasePianoKey
+from globallll.global_types import Clef, Image
+from globallll.piano_key import BasePianoKey
 from image_processing.note_press_detection import NoteDetector
 
 

@@ -1,4 +1,4 @@
-from globals.math_utils import take_closest
+from globallll.math_utils import take_closest
 from notation.consts import LENGTHS, OCTAVES
 from notation.note_stream import NoteInstance
 

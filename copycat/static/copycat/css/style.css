@@ -1,0 +1,207 @@
+/* style.css */
+body > header {
+    background: hsl(0, 0%, 20%);
+    color: #fff;
+    padding: 20px 0;
+    max-width: 100%;
+    margin-left: 0px;
+    text-align: center;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+    padding-left: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  
+  h1 {
+    font-weight: bold;
+    margin: 20px 0;
+    margin-left: 50px;
+    color: #333;
+    font-size: 24px;
+  }
+  
+  h2 {
+    margin: 10px 0;
+    margin-left: 50px;
+  }
+  
+  h3 {
+    margin: 10px 0;
+    margin-left: 0px;
+  }
+  
+  p {
+    margin: 10px 0;
+  }
+  
+  p.expo {
+    font-size: 12px;
+    margin: 20px 0;
+  }
+  
+  span {
+    font-size: 18px;
+    margin: 10px 0;
+  }
+  
+  form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 50px;
+    margin-bottom: 20px;
+    max-width: 800px; /* フォーム全体の幅を制限 */
+  }
+  
+  form p {
+    margin-bottom: 10px;
+  }
+  
+  form input[type="text"],
+  form input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  form input[type="submit"],
+  form input[type="reset"],
+  form button {
+    display: inline-block;
+    width: auto;
+    padding: 10px 20px;
+    margin-left: 0px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  form input[type="submit"]:hover,
+  form input[type="reset"]:hover,
+  form button:hover {
+    background: #555;
+  }
+  
+  .messages {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .messages li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .messages li.error {
+    background: #f2dede;
+    color: #a94442;
+    margin-left: 50px;
+  }
+  
+  .messages li.success {
+    background: #dff0d8;
+    color: #3c763d;
+    margin-left: 50px;
+  }
+  
+  .box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 50px;
+    margin-bottom: 20px;
+    max-width: 800px;
+  }
+  
+  pre {
+    background: #f4f4f9;
+    padding: 10px;
+    border-radius: 5px;
+    overflow: auto;
+  }
+  
+  button {
+    background: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 50px;
+  }
+  
+  button:hover {
+    background: #555;
+  }
+  
+  footer {
+    background: hsl(0, 0%, 20%);
+    color: #fff;
+    padding: 20px 0;
+    max-width: 100%;
+    margin-top: 100px;
+    margin-left: 0px;
+    text-align: center;
+  }
+  
+  
+  
+  /* Below is the css on the right side of the page */
+  .container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .main-content {
+    flex: 1;
+    margin-right: 20px;
+  }
+  
+  .sidebar {
+    text-align: center;
+    width: 250px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sidebar h4 {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 25px;
+    border-width: 2px;
+    padding: 5px;
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  
+  .sidebar h5 {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 17px;
+  }
+  

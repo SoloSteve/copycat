@@ -2,7 +2,7 @@ from enum import Enum
 from dataclasses import dataclass
 from typing import NewType, Tuple
 
-from cv2 import cv2
+import cv2
 from numpy import ndarray
 
 Image = NewType("Image", ndarray)
